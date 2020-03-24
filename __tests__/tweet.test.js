@@ -55,6 +55,35 @@ describe('app routes', () => {
       });
   });
 
+  it('gets all tweets', () => {
+    const tweets = [
+      {
+        handle: 'will@will.com',
+        text: 'Some random tweet',
+      },
+      {
+        handle: 'will@piro.com',
+        text: 'Some other random tweet',
+      },
+    ];
+
+    return Tweet
+      .create(tweets)
+      .then(() => {
+        return request(app)
+          .get('/api/v1/tweets');
+      })
+      .then(res => {
+        tweets.forEach(tweet => {
+          expect(res.body).toContainEqual({
+            ...tweet,
+            _id: expect.any(String),
+            __v:0,
+          });
+        });
+      });
+  });
+
   it('updates a customer by id', () => {
     return Tweet.create({
       handle: 'will@will.com',
