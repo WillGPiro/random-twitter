@@ -54,6 +54,27 @@ describe('app routes', () => {
         });
       });
   });
+
+  it('updates a customer by id', () => {
+    return Tweet.create({
+      handle: 'will@will.com',
+      text: 'Some random tweet',
+    })
+      .then(tweet => {
+        return request(app)
+          .patch(`/api/v1/tweets/${tweet.id}`)
+          .send({ text: 'Some different random tweet' });
+      })
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          handle: 'will@will.com',
+          text: 'Some different random tweet',
+          __v: 0
+        });
+      });
+  });
 });
+
 
 
