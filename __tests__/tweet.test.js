@@ -17,4 +17,10 @@ describe('app routes', () => {
   afterAll(() => {
     return mongoose.connection.close();
   });
+
+  it('creates a tweet', () => {
+    return request(app);
+  });
+
+
 });
