@@ -4,7 +4,7 @@ const request = require('supertest');
 const app = require('../lib/app');
 const connect = require('../lib/utils/connect');
 const mongoose = require('mongoose');
-const Comment = ('../lib/models/Comment');
+const Comment = require('../lib/Models/Comment');
 const Tweet = require('../lib/Models/Tweets');
 
 describe('app routes', () => {
@@ -28,14 +28,48 @@ describe('app routes', () => {
       .then(tweet => {
         return request(app)
           .post('/api/v1/comments')
-          .send({ comment: 'Hey Love', tweet: tweet._id });
+          .send({ 
+            comment: 'Hey Love', 
+            tweet: tweet._id 
+          });
       })
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.any(String),
-          comment: 'Hey Love', tweet: expect.any(String),
+          comment: 'Hey Love', 
+          tweet: expect.any(String),
           __v:0
         });
+      });
+  });
+
+  it('gets a comment by id', () => {
+    return Tweet.create({
+      handle: 'rachel@rachel.com',
+      text: 'Hey Babe!'
+    })
+      .then(tweet => {
+        return Comment.create({
+          comment: 'Hey Love', 
+          tweet: tweet._id,
+        })
+          .then(comment => {
+            return request(app)
+              .get(`/api/v1/comments/${comment.id}`);
+          })
+          .then(res => {
+            expect(res.body).toEqual({
+              _id: expect.any(String),
+              comment: 'Hey Love',
+              tweet: {
+                _id: expect.any(String),
+                handle: 'rachel@rachel.com',
+                text: 'Hey Babe!',
+                __v:0
+              },
+              __v:0
+            });
+          });
       });
   });
 });
