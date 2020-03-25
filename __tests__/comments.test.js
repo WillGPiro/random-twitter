@@ -97,5 +97,29 @@ describe('app routes', () => {
           });
       });
   });
+  it('deletes a comment by id', () => {
+    return Tweet.create({
+      handle: 'rachel@rachel.com',
+      text: 'Hey Babe!'
+    })
+      .then(tweet => {
+        return Comment.create({
+          comment: 'Hey Love', 
+          tweet: tweet._id,
+        })
+          .then(deletedComment => {
+            return request(app)
+              .delete(`/api/v1/comments/${deletedComment.id}`);
+          })
+          .then(res => {
+            expect(res.body).toEqual({
+              _id: expect.any(String),
+              comment: 'Hey Love',
+              tweet: expect.any(String),
+              __v: 0
+            });
+          });
+      });
+  });
 });
 
